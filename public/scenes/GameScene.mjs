@@ -23,9 +23,9 @@ export class GameScene extends Phaser.Scene {
         let scale = Math.max(scaleX, scaleY);
         map.setScale(scale);
 
-        // Добавляем игрока у левого края и масштабируем его до 10% от игрового поля
-        let player = this.physics.add.sprite(0, this.cameras.main.height / 2, 'player');
-        player.setOrigin(0, 0.5); // Устанавливаем точку привязки к левому краю и центру по вертикали
+        // Добавляем игрока у нижнего края и масштабируем его до 10% от игрового поля
+        let player = this.physics.add.sprite(this.cameras.main.width / 2, this.cameras.main.height, 'player');
+        player.setOrigin(0.5, 1); // Устанавливаем точку привязки к центру по горизонтали и нижнему краю по вертикали
         player.setScale(0.1 * this.cameras.main.width / player.width, 0.1 * this.cameras.main.height / player.height);
         player.setCollideWorldBounds(true);
 
@@ -46,10 +46,10 @@ export class GameScene extends Phaser.Scene {
         });
 
         // Начальные параметры для спавна и скорости астероидов
-        let initialAsteroidSpeed = -200;
+        let initialAsteroidSpeed = 200;
         let initialSpawnDelay = 1000;
         let minSpawnDelay = 200; // Минимальный интервал спавна
-        let maxAsteroidSpeed = -600; // Максимальная скорость астероидов
+        let maxAsteroidSpeed = 600; // Максимальная скорость астероидов
 
         // Настраиваем таймер для создания астероидов
         let asteroidTimer = this.time.addEvent({
@@ -84,13 +84,13 @@ export class GameScene extends Phaser.Scene {
         distanceText.setScale(0.1 * this.cameras.main.width / distanceText.width, 0.1 * this.cameras.main.height / distanceText.height);
 
         function fireBullet() {
-            let bullet = bullets.create(player.x + player.displayWidth, player.y, 'bullet');
+            let bullet = bullets.create(player.x, player.y - player.displayHeight, 'bullet');
 
             if (bullet) {
                 bullet.setActive(true);
                 bullet.setVisible(true);
                 bullet.setScale(0.2 * player.displayWidth / bullet.width, 0.1 * player.displayHeight / bullet.height);
-                bullet.body.velocity.x = 500;
+                bullet.body.velocity.y = -500;
 
                 // Удаляем снаряд, когда он выходит за пределы экрана
                 bullet.checkWorldBounds = true;
@@ -99,8 +99,8 @@ export class GameScene extends Phaser.Scene {
         }
 
         function createAsteroid() {
-            let y = Phaser.Math.Between(0, this.cameras.main.height);
-            let asteroid = asteroids.create(this.cameras.main.width, y, 'asteroid');
+            let x = Phaser.Math.Between(0, this.cameras.main.width);
+            let asteroid = asteroids.create(x, 0, 'asteroid');
 
             if (asteroid) {
                 asteroid.setActive(true);
@@ -114,7 +114,7 @@ export class GameScene extends Phaser.Scene {
 
                 // Увеличиваем скорость астероидов в зависимости от пройденного расстояния
                 let speedIncrease = (distance / 1000) * (maxAsteroidSpeed - initialAsteroidSpeed);
-                asteroid.body.velocity.x = Math.max(initialAsteroidSpeed + speedIncrease, maxAsteroidSpeed);
+                asteroid.body.velocity.y = Math.max(initialAsteroidSpeed + speedIncrease, maxAsteroidSpeed);
 
                 // Удаляем астероид, когда он выходит за пределы экрана
                 asteroid.checkWorldBounds = true;
@@ -145,12 +145,12 @@ export class GameScene extends Phaser.Scene {
 
         this.update = function () {
             // Управление игроком с помощью клавиатуры
-            if (cursors.up.isDown) {
-                player.setVelocityY(-300);
-            } else if (cursors.down.isDown) {
-                player.setVelocityY(300);
+            if (cursors.left.isDown) {
+                player.setVelocityX(-300);
+            } else if (cursors.right.isDown) {
+                player.setVelocityX(300);
             } else {
-                player.setVelocityY(0);
+                player.setVelocityX(0);
             }
 
             // Стрельба
