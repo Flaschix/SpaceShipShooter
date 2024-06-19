@@ -9,13 +9,14 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1260,
-        height: 740
+        width: 1280,
+        height: 720
     },
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 0 }
+            gravity: { y: 0 },
+            // debug: true
         }
     },
     scene: [StartScene, GameScene, LoseScene, WinScene]
